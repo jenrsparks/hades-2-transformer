@@ -52,12 +52,14 @@ public class LuaDataExtractor {
     }
 
     protected Object convert(LuaValue luaData) {
-        if(luaData == null) return null;
+        if(luaData == null)     return null;
+        if(luaData.isnil())     return null;
         if(luaData.isboolean()) return luaData.toboolean();
         if(luaData.isint())     return luaData.toint();
-        if(luaData.isnumber())  return luaData.tolong(); // no doubles here, folks
-        if(luaData.isstring())  return luaData.tostring();
-        if(luaData.isnil())     return null;
+        if(luaData.islong())    return luaData.tolong();
+        if(luaData.isnumber())  return luaData.todouble();
+        if(luaData.isstring())  return luaData.tojstring();
+
         if(luaData.istable()) { 
             LuaTable table = luaData.checktable();
             if(table.length() > 0) { // Indicative of a list type
@@ -72,7 +74,7 @@ public class LuaDataExtractor {
 
     protected List<Object> convertList(LuaTable table) {
         List<Object> entryList = new ArrayList<>();
-        for (int i = 0; i < table.length(); i++) {
+        for (int i = 1; i <= table.length(); i++) {
             Object convertedItem = convert(table.get(i));
             entryList.add(convertedItem);
         }

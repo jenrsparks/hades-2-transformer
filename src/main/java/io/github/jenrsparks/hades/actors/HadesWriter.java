@@ -3,12 +3,12 @@ package io.github.jenrsparks.hades.actors;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonIOException;
-import com.google.gson.JsonObject;
 
 public class HadesWriter {
 
@@ -24,7 +24,7 @@ public class HadesWriter {
         }
     }
 
-    public boolean writeJsonToFile(JsonObject data) {
+    public boolean writeJsonToFile(Map<String,Object> data) {
         boolean success = false;
         Gson gson = new GsonBuilder().setPrettyPrinting().create();
         
@@ -32,6 +32,7 @@ public class HadesWriter {
             gson.toJson(data, fileWriter);
             fileWriter.flush();
             success = true;
+
         } catch (JsonIOException e) {
             throw new RuntimeException("Failed to write JSON to file", e);
         } catch (IOException e) {

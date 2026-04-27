@@ -3,8 +3,11 @@ package io.github.jenrsparks.hades.actors;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import java.util.ArrayList;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
+import org.luaj.vm2.LuaTable;
 import org.luaj.vm2.LuaValue;
 
 public class LuaDataExtractorTest {
@@ -24,12 +27,19 @@ public class LuaDataExtractorTest {
     }
 
     @Test
+    void testConvert_nil() {
+        LuaValue input = LuaValue.NIL;
+        Object output = extractor.convert(input);
+        assertNull(output);
+    }
+
+    @Test
     void testConvert_boolean() {
         LuaValue input = LuaValue.valueOf(false);
         Object output = extractor.convert(input);
         assertNotNull(output);
-        assertEquals(output.getClass(), Boolean.class);
-        assertEquals(output.toString(), "false");
+        assertEquals(Boolean.class, output.getClass());
+        assertEquals("false", output.toString());
     }
 
     @Test
@@ -37,8 +47,49 @@ public class LuaDataExtractorTest {
         LuaValue input = LuaValue.valueOf(1);
         Object output = extractor.convert(input);
         assertNotNull(output);
-        assertEquals(output.getClass(), Integer.class);
-        assertEquals(output.toString(), "1");
+        assertEquals(Integer.class, output.getClass());
+        assertEquals("1", output.toString());
+    }
+
+    @Test
+    void testConvert_Long() {
+        LuaValue input = LuaValue.valueOf(Long.MIN_VALUE);
+        Object output = extractor.convert(input);
+        assertNotNull(output);
+        assertEquals(Long.class, output.getClass());
+        assertEquals(String.valueOf(Long.MIN_VALUE), output.toString());
+    }
+
+    @Test
+    void testConvert_Float() {
+        LuaValue input = LuaValue.valueOf(1.234f);
+        Object output = extractor.convert(input);
+        assertNotNull(output);
+        assertEquals(Double.class, output.getClass());
+        // Floats are the worst, but rounding / truncation makes it work (enough)
+        assertEquals("1.234", String.format("%.3f", (Double) output));
+    }
+
+    @Test
+    void testConvert_Double() {
+        LuaValue input = LuaValue.valueOf(1.234d);
+        Object output = extractor.convert(input);
+        assertNotNull(output);
+        assertEquals(Double.class, output.getClass());
+        // Floats are the worst, but rounding / truncation makes it work (enough)
+        assertEquals("1.234", output.toString());
+    }
+
+    @Test
+    @Disabled("Currently failing to initialize input data; not the fault of the method under test.")
+    void testConvert_Table() {
+        LuaValue[] keys = { LuaValue.valueOf(1) };
+        LuaTable input = LuaValue.tableOf(keys);
+        Object output = extractor.convert(input);
+        assertNotNull(output);
+        assertEquals(ArrayList.class, output.getClass());
+        // Floats are the worst, but rounding / truncation makes it work (enough)
+        assertEquals(1, ((ArrayList<?>) output).size());
     }
 
     @Test

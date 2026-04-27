@@ -3,7 +3,6 @@ package io.github.jenrsparks.hades;
 import java.io.File;
 import java.util.Map;
 import org.slf4j.LoggerFactory;
-import com.google.gson.JsonObject;
 import io.github.jenrsparks.hades.actors.HadesConverter;
 import io.github.jenrsparks.hades.actors.HadesWriter;
 import io.github.jenrsparks.hades.actors.LuaDataExtractor;
@@ -35,10 +34,10 @@ public class App implements Runnable {
         logger.debug("Reading from: " + inputFile.getAbsolutePath());
         logger.debug("Writing to: " + outputFile.getAbsolutePath());
         
-        Map<String,Object> luaData = new LuaDataExtractor().extract(inputFile);        
-        JsonObject data = new HadesConverter().convert(luaData);
+        Map<String,Object> rawData = new LuaDataExtractor().extract(inputFile);        
+        Map<String,Object> convertedData = new HadesConverter().convert(rawData);
 
-        boolean success = new HadesWriter(outputFile).writeJsonToFile(data);
+        boolean success = new HadesWriter(outputFile).writeJsonToFile(convertedData);
         if (success) {
             logger.debug("Successfully wrote JSON to file: " + outputFile.getAbsolutePath());
         } else {
