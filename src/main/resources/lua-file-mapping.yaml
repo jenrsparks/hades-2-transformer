@@ -1,0 +1,63 @@
+fields:
+- TIMESTAMP # use for 'last updated' / file save timestamp
+- COMPLETED_RUNS
+- LUA_DATA:
+    GameState:
+      BiomeVisits: # name plus times visited
+      - G: 29
+      - Chaos: 17
+      - N: 25
+      - C: 1
+      ExorcisedNames:
+        # shades by location & name + count
+        - [name]: '#'
+      WeaponsUnlocked:
+        # list of weapons and 'true' indicating unlock
+        - [name]: true
+      PackagedBountyClears:
+        # chaos trials / challenges & count of completions
+        - [Package...]: '#'
+      PackagedBountyClearRecordTime:
+        # fastest clear records for chaos trials
+      RunHistory: #list of runs
+        - RunResult: number
+            # 0: incomplete?
+            # 1: success
+            # 2: failure
+            # 3: success - ??
+            #   - ending room is 'Q_Story01'
+            #   - have 10 of them so far
+            #   - contains victory message
+            # 4: failure - time on surface death
+            # 5: failure - ???
+            # 6: success - ?
+          KilledByName: enemy that ended the run, only present if failed
+          GameplayTime: duration of run
+          TraitCache:
+            - [name]: [level] or [rarity]?
+          MetaUpgradeCostCache: unknown
+          ShrinePointsCache: unknown
+          KeepsakeCache: unknown
+          VictoryMessage: code for tag on win?
+          WeaponsUnlocked: -- unlocks for hidden 4th only?
+            - [weapon code]: true
+          Cleared: true -- what state does this indicate? game win?
+          SpawnRecord: list of enemy names & count
+            - [name]: count as "#"
+          DamageDealtByEnemiesRecord: list of enemies & damage count
+            - [name]: "#"
+          BiomeVisitOrder: obfuscated ID list
+            - letter
+            - H, I, J, K ?
+            - N, O, P, Q ?
+            - only shows up 4 times which seems weird
+      WeaponKills:
+        - weapon attack name: '##'
+    GiftRecord:
+      - per person/target
+        - list of 'giftpoints' entries, as well as totals
+    PolymorphRecord:
+      - type : count
+      - pig: 6
+      - rat: 2
+      - sheep: 11
