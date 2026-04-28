@@ -3,6 +3,7 @@ package io.github.jenrsparks.hades.constants;
 public enum LuaConstant {
     // Get into the data block at the top-level
     LUA_DATA_KEY ("LUA_DATA"),
+    COMPLETED_RUNS_KEY ("COMPLETED_RUNS"),
     
     // Current / latest state:
     // -- Total time played

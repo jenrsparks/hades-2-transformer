@@ -1,0 +1,46 @@
+- "operation": "shift"
+  "spec":
+      "COMPLETED_RUNS": "completed_runs"
+      "LUA_DATA":
+          "GameState":
+              "Revision": "game_state.revision"
+              "RunHistory":
+                  "*":
+                      #The '*' loops through every run in the array
+
+                      # '$' grabs the current array index and maps it to the 'night' field
+                      "$": "nights[&1].night"
+                      "RunResult": "nights[&1].result.status"
+                      "KilledByName": "nights[&1].result.killed_by"
+                      "GameplayTime": "nights[&1].duration" # will need format converstion to min:sec.micro
+                      "VictoryMessage": "nights[&1].tagline"
+                      # TODO - nights[&1].result.ended_in
+                    #   "BiomeVisitOrder": "=lastElement(@(1,BiomeVisitOrder))" # grabs the last biome visited in the run, which is where it ended
+
+
+                    #   # --- ROOT LEVEL METRICS ---
+                    #   # [&1] tells Jolt: "Go up 1 level to find the array index, 
+                    #   # and use that same index for the new 'nights' array."
+                    #   "Type": "nights[&1].run_type"
+                    #   "ActiveFamiliar": "nights[&1].familiar"
+                    #   # --- NESTED OBJECTS ---
+                    #   # We can map flat source keys directly into nested target objects
+                    #   "Status": "nights[&1].result.status"
+                    #   "Killer": "nights[&1].result.killed_by"
+                    #   "Biome": "nights[&1].result.ended_in"
+                    #   "WeaponName": "nights[&1].weapon.base"
+                    #   "WeaponAspect": "nights[&1].weapon.aspect"
+                    #   # --- ARRAYS & LISTS ---
+                    #   "KeepsakeList":
+                    #       "*":
+                    #           # Loop through the items in the KeepsakeList
+                    #           # [&3] tells Jolt: "Go up 3 levels to find the run's array index 
+                    #           # so this item gets put into the correct night."
+                    #           # The '[]' at the end tells Jolt to append it as a new array item.
+                    #           "@": "nights[&3].keepsakes[]"
+                    #   "BoonList":
+                    #       "*":
+                    #           "@": "nights[&3].boons[]"
+                    #   "CardList":
+                    #       "*":
+                    #           "@": "nights[&3].cards[]"

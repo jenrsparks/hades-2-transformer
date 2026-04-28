@@ -23,7 +23,9 @@ public class App implements Runnable {
     @Option(names = {"-o", "--output"}, description = "Output JSON file", defaultValue = "save2.json")
     private File outputFile;
 
-    
+    @Option(names = {"-s", "--spec"}, description = "JOLT spec JSON file for data transformation", required = false)
+    private File specFile;
+
     public static void main(String[] args) {
         int exitCode = new CommandLine(new App()).execute(args);
         System.exit(exitCode);
@@ -33,9 +35,11 @@ public class App implements Runnable {
     public void run() {
         logger.debug("Reading from: " + inputFile.getAbsolutePath());
         logger.debug("Writing to: " + outputFile.getAbsolutePath());
+
+        specFile = specFile != null ? specFile : new File(this.getClass().getResource("/default-jolt-spec.yaml").getFile());
         
         Map<String,Object> rawData = new LuaDataExtractor().extract(inputFile);        
-        Map<String,Object> convertedData = new HadesConverter().convert(rawData);
+        Map<String,Object> convertedData = new HadesConverter(specFile).convert(rawData);
 
         boolean success = new HadesWriter(outputFile).writeJsonToFile(convertedData);
         if (success) {

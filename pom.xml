@@ -50,6 +50,25 @@
         <version>2.10.1</version>
     </dependency>
 
+    <!-- Jackson for YAML parsing -->
+    <dependency>
+        <groupId>com.fasterxml.jackson.core</groupId>
+        <artifactId>jackson-databind</artifactId>
+        <version>2.17.1</version>
+    </dependency>
+    <dependency>
+        <groupId>com.fasterxml.jackson.dataformat</groupId>
+        <artifactId>jackson-dataformat-yaml</artifactId>
+        <version>2.17.1</version>
+    </dependency>
+
+    <!-- Jolt JSON transformation library -->
+    <dependency>
+        <groupId>com.bazaarvoice.jolt</groupId>
+        <artifactId>jolt-core</artifactId>
+        <version>0.1.1</version>
+    </dependency>
+
     <!-- Logging: SLF4J API -->
     <dependency>
         <groupId>org.slf4j</groupId>

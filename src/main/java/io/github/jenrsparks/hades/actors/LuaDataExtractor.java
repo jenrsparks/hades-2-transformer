@@ -37,7 +37,10 @@ public class LuaDataExtractor {
         globals.loadfile( inputFile.getAbsolutePath() ).call();
 
         // TODO Change to list from resource file (?)
-        List<LuaConstant> topLevelTargets = List.of( LuaConstant.LUA_DATA_KEY );
+        List<LuaConstant> topLevelTargets = List.of( 
+            LuaConstant.LUA_DATA_KEY,
+            LuaConstant.COMPLETED_RUNS_KEY 
+        );
         for(LuaConstant target : topLevelTargets) {
             LuaValue luaData = globals.get( target.getFieldName() );
 
