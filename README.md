@@ -12,3 +12,11 @@
 4. From the `build` folder, run `clang++ -std=c++17 -I../src ../src/main.cpp -L. -lHadesSavesExtractorLib -o HadesSavesExtractor`.
 5. Run `make`.
 6. Find the executable in `bin/` folder.
+
+---
+
+## Alternate Languages for Traits
+
+- Grab the TraitText.**.sjson from the game files
+- Run it as an input for `convert-traits.sh` and output to a new file
+- Pass in the file using the parameter ***TBD***.

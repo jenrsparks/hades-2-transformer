@@ -1,0 +1,19 @@
+- operation: shift
+  spec:
+    "@": ""
+    "LUA_DATA":
+        "GameState":
+            "Revision": "game_state.revision"
+            "RunHistory":
+                "*": #The '*' loops through every run in the array
+                    "$": "LUA_DATA.GameState.RunHistory[&1].night" # '$' grabs the current array index and maps it to the 'night' field (0-based index)
+- operation: modify-overwrite-beta
+  # Native transformation where possible prior to post-processing
+  spec:
+    "LUA_DATA":
+        "GameState":
+            "Revision": "game_state.revision"
+            "RunHistory":
+                "*": #The '*' loops through every run in the array
+                  night: "=intSum(@(1,night), 1)"
+                  

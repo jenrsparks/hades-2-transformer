@@ -5,42 +5,102 @@
           "GameState":
               "Revision": "game_state.revision"
               "RunHistory":
-                  "*":
-                      #The '*' loops through every run in the array
-
-                      # '$' grabs the current array index and maps it to the 'night' field
-                      "$": "nights[&1].night"
+                  "*": #The '*' loops through every run in the array
+                      "$": "nights[&1].night" # '$' grabs the current array index and maps it to the 'night' field (0-based index)
+                      "VictoryMessage": "nights[&1].tagline"
                       "RunResult": "nights[&1].result.status"
                       "KilledByName": "nights[&1].result.killed_by"
-                      "GameplayTime": "nights[&1].duration" # will need format converstion to min:sec.micro
-                      "VictoryMessage": "nights[&1].tagline"
-                      # TODO - nights[&1].result.ended_in
-                    #   "BiomeVisitOrder": "=lastElement(@(1,BiomeVisitOrder))" # grabs the last biome visited in the run, which is where it ended
+                      "GameplayTime": "nights[&1].duration" # will need format conversion to min:sec.micro
+                      "EndingRoomName": "nights[&1].result.ended_in"
+                      "BiomeVisitOrder": "nights[&1].biomes"
+                      # run_type
+                      # weapon.base
+                      "KeepsakeCache:": "nights[&1].keepsakes"
+                      # cards (list)
+                      # vows (list of k/v)
+                      #
+                      # "ActiveBounty": "PackageBountyRevenge"
+                      # ^ chaos trial for mapping back
+                      #
+                      "TraitCache":
+                        # Familiars:
+                        # -- TODO: Validate counts for each pet match
+                        "FamiliarPolecatDamage": {
+                            "#Gale": "nights[&3].familiar"
+                        }
+                        "FamiliarCatAttacks": {
+                            "#Toula": "nights[&3].familiar"
+                        }
+                        "FamiliarFrogDamage": {
+                            "#Frinos": "nights[&3].familiar"
+                        }
+                        "FamiliarRavenAttackDuration": {
+                            "#Raki": "nights[&3].familiar"
+                        }
+                        "FamiliarHoundResourceBonus": {
+                            "#Hecuba": "nights[&3].familiar"
+                        }
+                        ## Boons:
+                        "*Boon": {
+                            "$": "nights[&3].boons[]"
+                        }
+                        ## Weapon Aspect:
+                        "*Aspect": {
+                           "$(0,1)": "nights[&3].weapon.aspect" 
+                        }
+                        "DummyWeapon*": {
+                           "$": "nights[&3].weapon.aspect",
+                           "$(0,1)": "nights[&3].weapon.base"
+                        }
+                      ## Weapon Base:
+                      "WeaponsCache": 
+                        #    Here, we're just getting 
+                        #    the raw list; mapping should help narrow
+                        #    down which base & aspect we have.
+                        #
+                        # "*": {
+                        #     "$": "nights[&3].weapons[]"
+                        # }
+                        "WeaponAxe": {
+                            "#Axe": "nights[&3].weapon.base"
+                        }
+                        "WeaponDagger": {
+                            "#Dagger": "nights[&3].weapon.base"
+                        }
+                        "WeaponSuit": {
+                            "#Suit": "nights[&3].weapon.base"
+                        }
+                        "WeaponTorch": {
+                            "#Torch": "nights[&3].weapon.base"
+                        }
+                        "WeaponStaffBall": {
+                            "#Staff": "nights[&3].weapon.base"
+                        }
+                        "WeaponLob": {
+                            "#Lob": "nights[&3].weapon.base"
+                        }
 
 
-                    #   # --- ROOT LEVEL METRICS ---
-                    #   # [&1] tells Jolt: "Go up 1 level to find the array index, 
-                    #   # and use that same index for the new 'nights' array."
-                    #   "Type": "nights[&1].run_type"
-                    #   "ActiveFamiliar": "nights[&1].familiar"
-                    #   # --- NESTED OBJECTS ---
-                    #   # We can map flat source keys directly into nested target objects
-                    #   "Status": "nights[&1].result.status"
-                    #   "Killer": "nights[&1].result.killed_by"
-                    #   "Biome": "nights[&1].result.ended_in"
-                    #   "WeaponName": "nights[&1].weapon.base"
-                    #   "WeaponAspect": "nights[&1].weapon.aspect"
-                    #   # --- ARRAYS & LISTS ---
-                    #   "KeepsakeList":
-                    #       "*":
-                    #           # Loop through the items in the KeepsakeList
-                    #           # [&3] tells Jolt: "Go up 3 levels to find the run's array index 
-                    #           # so this item gets put into the correct night."
-                    #           # The '[]' at the end tells Jolt to append it as a new array item.
-                    #           "@": "nights[&3].keepsakes[]"
-                    #   "BoonList":
-                    #       "*":
-                    #           "@": "nights[&3].boons[]"
-                    #   "CardList":
-                    #       "*":
-                    #           "@": "nights[&3].cards[]"
+- operation: modify-overwrite-beta
+  # Native transformation where possible prior to post-processing
+  spec:
+      nights:
+          "*":
+              # For every night in the new array...
+              # 1. Cast the string "0" to an integer
+              # 2. Add 1 to it
+              # 3. Overwrite the original 'night' field with the new value
+              night: "=intSum(@(1,night), 1)"
+
+# - operation: default
+#   spec:
+#     nights[]: 
+#       "*": # For every run in the array
+#         result:
+#           killed_by: "None"
+#           ended_in: "**TBD**"
+#         tagline: ""
+#         duration: 0.0 # protect against missing data
+#         weapon:
+#           base: "Unknown"
+#           aspect: "Unknown"

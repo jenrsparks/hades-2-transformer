@@ -13,21 +13,60 @@ import com.google.gson.JsonIOException;
 public class HadesWriter {
 
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
+    Map<String,Object> data;
     FileWriter fileWriter;
 
-    public HadesWriter(File outputFile) {
+    // public HadesWriter(File outputFile) {
+    //     try {
+    //         this.fileWriter = new FileWriter(outputFile);
+    //     } catch (IOException e) {
+    //         throw new RuntimeException(
+    //                 "Failed to create FileWriter for file: " + outputFile.getAbsolutePath(), e);
+    //     }
+    // }
+
+    public HadesWriter(Map<String, Object> data) {
+        this.data = data;
+    }
+
+    // public boolean writeJsonToFile(Map<String,Object> data) {
+    //     boolean success = false;
+    //     Gson gson = new GsonBuilder().setPrettyPrinting().create();
+        
+    //     try {
+    //         gson.toJson(data, fileWriter);
+    //         fileWriter.flush();
+    //         success = true;
+
+    //     } catch (JsonIOException e) {
+    //         throw new RuntimeException("Failed to write JSON to file", e);
+    //     } catch (IOException e) {
+    //         throw new RuntimeException("Failed to flush FileWriter", e);
+    //     } finally {
+    //         try {
+    //             fileWriter.close();
+    //         } catch (IOException e) {
+    //             // Log the error but don't rethrow since the main operation succeeded
+    //             logger.warn("Failed to close FileWriter: " + e.getMessage());
+    //         }
+    //     }
+    //     return success;
+    // }
+
+    public HadesWriter file(File outputFile) {
         try {
             this.fileWriter = new FileWriter(outputFile);
         } catch (IOException e) {
             throw new RuntimeException(
-                "Failed to create FileWriter for file: " + outputFile.getAbsolutePath(), e);
+                    "Failed to create FileWriter for file: " + outputFile.getAbsolutePath(), e);
         }
+        return this;
     }
 
-    public boolean writeJsonToFile(Map<String,Object> data) {
+    public boolean writeAsJson() {
         boolean success = false;
         Gson gson = new GsonBuilder().setPrettyPrinting().create();
-        
+
         try {
             gson.toJson(data, fileWriter);
             fileWriter.flush();
@@ -47,5 +86,4 @@ public class HadesWriter {
         }
         return success;
     }
-
 }
