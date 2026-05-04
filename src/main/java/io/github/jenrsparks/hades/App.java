@@ -20,6 +20,14 @@ public class App implements Runnable {
 
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
+    /**
+     * 
+     * Planned features:
+     * - TODO - Selection of JSON vs YAML output
+     * - TODO - Translation file override, or language selection
+     * 
+     */
+
     @Option(names = {"-i", "--input"}, description = "Input LUA file", defaultValue = "save2.lua")
     private File inputFile;
 
@@ -44,7 +52,6 @@ public class App implements Runnable {
     public void run() {
         logger.debug("Reading from: " + inputFile.getAbsolutePath());
         logger.debug("Writing to: " + outputFile.getAbsolutePath());
-
 
         Map<String, Object> rawData = new LuaDataExtractor().extract(inputFile);
         convertAndWrite(rawData, outputFile, specFile, DEFAULT_SPEC_FILE.getValue());

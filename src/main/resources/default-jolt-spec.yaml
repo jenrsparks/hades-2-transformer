@@ -22,6 +22,7 @@
                       # "ActiveBounty": "PackageBountyRevenge"
                       # ^ chaos trial for mapping back
                       #
+                      "MetaUpgradeCostCache": "nights[&1].arcana_points"
                       "TraitCache":
                         # Familiars:
                         # -- TODO: Validate counts for each pet match
@@ -44,13 +45,16 @@
                         "*Boon": {
                             "$": "nights[&3].boons[]"
                         }
+                        ## Cards:
+                        "*MetaUpgrade": {
+                            "$": "nights[&3].cards[]"
+                        }
                         ## Weapon Aspect:
                         "*Aspect": {
-                           "$(0,1)": "nights[&3].weapon.aspect" 
+                           "$": "nights[&3].weapon.aspect" 
                         }
                         "DummyWeapon*": {
-                           "$": "nights[&3].weapon.aspect",
-                           "$(0,1)": "nights[&3].weapon.base"
+                           "$": "nights[&3].weapon.aspect"
                         }
                       ## Weapon Base:
                       "WeaponsCache": 
@@ -79,7 +83,6 @@
                         "WeaponLob": {
                             "#Lob": "nights[&3].weapon.base"
                         }
-
 
 - operation: modify-overwrite-beta
   # Native transformation where possible prior to post-processing
