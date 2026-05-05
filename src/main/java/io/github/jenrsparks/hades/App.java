@@ -4,7 +4,6 @@ import static io.github.jenrsparks.hades.constants.WriterConstant.DEFAULT_SPEC_F
 import static io.github.jenrsparks.hades.constants.WriterConstant.PASSTHROUGH_SPEC_FILE;
 import java.io.File;
 import java.util.Map;
-import javax.management.RuntimeErrorException;
 import org.slf4j.LoggerFactory;
 import io.github.jenrsparks.hades.actors.HadesConverter;
 import io.github.jenrsparks.hades.actors.HadesWriter;
@@ -14,8 +13,8 @@ import picocli.CommandLine.Command;
 import picocli.CommandLine.Option;
 import org.slf4j.Logger;
 
-@Command(name = "hades-2-json-converter", mixinStandardHelpOptions = true, version = "1.0",
-        description = "Converts Hades 2 LUA files to JSON format.")
+@Command(name = "hades-2-transformer", mixinStandardHelpOptions = true, version = "1.0",
+        description = "Converts Hades 2 LUA files to another format with transformations & dictionaries applied.")
 public class App implements Runnable {
 
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
@@ -24,7 +23,8 @@ public class App implements Runnable {
      * 
      * Planned features:
      * - TODO - Selection of JSON vs YAML output
-     * - TODO - Translation file override, or language selection
+     * - TODO - Translation file language selection
+     * - TODO - Custom translation file as alternative
      * 
      */
 
@@ -56,7 +56,7 @@ public class App implements Runnable {
         Map<String, Object> rawData = new LuaDataExtractor().extract(inputFile);
         convertAndWrite(rawData, outputFile, specFile, DEFAULT_SPEC_FILE.getValue());
 
-        // temp -- get rid of this later:
+        // TODO -- get rid of this, or keep for debug only
         convertAndWrite(rawData, tempFile, specFile, PASSTHROUGH_SPEC_FILE.getValue());
     }
 

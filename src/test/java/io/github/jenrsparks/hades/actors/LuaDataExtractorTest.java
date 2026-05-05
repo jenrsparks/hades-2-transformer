@@ -22,21 +22,21 @@ public class LuaDataExtractorTest {
     @Test
     void testConvert_null() {
         LuaValue input = null;
-        Object output = extractor.convert(input);
+        Object output = extractor.convertToNativeType(input, new java.util.HashSet<>());
         assertNull(output);
     }
 
     @Test
     void testConvert_nil() {
         LuaValue input = LuaValue.NIL;
-        Object output = extractor.convert(input);
+        Object output = extractor.convertToNativeType(input, new java.util.HashSet<>());
         assertNull(output);
     }
 
     @Test
     void testConvert_boolean() {
         LuaValue input = LuaValue.valueOf(false);
-        Object output = extractor.convert(input);
+        Object output = extractor.convertToNativeType(input, new java.util.HashSet<>());
         assertNotNull(output);
         assertEquals(Boolean.class, output.getClass());
         assertEquals("false", output.toString());
@@ -45,7 +45,7 @@ public class LuaDataExtractorTest {
     @Test
     void testConvert_Integer() {
         LuaValue input = LuaValue.valueOf(1);
-        Object output = extractor.convert(input);
+        Object output = extractor.convertToNativeType(input, new java.util.HashSet<>());
         assertNotNull(output);
         assertEquals(Integer.class, output.getClass());
         assertEquals("1", output.toString());
@@ -54,7 +54,7 @@ public class LuaDataExtractorTest {
     @Test
     void testConvert_Long() {
         LuaValue input = LuaValue.valueOf(Long.MIN_VALUE);
-        Object output = extractor.convert(input);
+        Object output = extractor.convertToNativeType(input, new java.util.HashSet<>());
         assertNotNull(output);
         assertEquals(Long.class, output.getClass());
         assertEquals(String.valueOf(Long.MIN_VALUE), output.toString());
@@ -63,7 +63,7 @@ public class LuaDataExtractorTest {
     @Test
     void testConvert_Float() {
         LuaValue input = LuaValue.valueOf(1.234f);
-        Object output = extractor.convert(input);
+        Object output = extractor.convertToNativeType(input, new java.util.HashSet<>());
         assertNotNull(output);
         assertEquals(Double.class, output.getClass());
         // Floats are the worst, but rounding / truncation makes it work (enough)
@@ -73,7 +73,7 @@ public class LuaDataExtractorTest {
     @Test
     void testConvert_Double() {
         LuaValue input = LuaValue.valueOf(1.234d);
-        Object output = extractor.convert(input);
+        Object output = extractor.convertToNativeType(input, new java.util.HashSet<>());
         assertNotNull(output);
         assertEquals(Double.class, output.getClass());
         // Floats are the worst, but rounding / truncation makes it work (enough)
@@ -85,7 +85,7 @@ public class LuaDataExtractorTest {
     void testConvert_Table() {
         LuaValue[] keys = { LuaValue.valueOf(1) };
         LuaTable input = LuaValue.tableOf(keys);
-        Object output = extractor.convert(input);
+        Object output = extractor.convertToNativeType(input, new java.util.HashSet<>());
         assertNotNull(output);
         assertEquals(ArrayList.class, output.getClass());
         // Floats are the worst, but rounding / truncation makes it work (enough)
