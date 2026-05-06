@@ -1,7 +1,6 @@
 package io.github.jenrsparks.hades.actors.impl;
 
 import java.io.File;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Map;
 import com.fasterxml.jackson.databind.ObjectMapper;

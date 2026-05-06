@@ -1,17 +1,32 @@
 package io.github.jenrsparks;
 
+import java.io.File;
+import java.util.List;
+
 public enum FileFormat {
-    JSON("json"),
-    YAML("yaml")
+    JSON(List.of("json")),
+    YAML(List.of("yaml", "yml"))
     ;
 
-    private final String formatName;
+    private final List<String> formatNames;
 
-    FileFormat(String formatName) {
-        this.formatName = formatName;
+    public static FileFormat getFileFormat(File file) {
+        String fileName = file.getName().toLowerCase();
+        for (FileFormat format : FileFormat.values()) {
+            for (String formatName : format.getValues()) {
+                if (fileName.endsWith("." + formatName)) {
+                    return format;
+                }
+            }
+        }
+        throw new IllegalArgumentException("Unsupported file format for file: " + file.getName());
     }
 
-    public String getValue() {
-        return formatName;
+    private FileFormat(List<String> formatNames) {
+        this.formatNames = formatNames;
+    }
+
+    private List<String> getValues() {
+        return formatNames;
     }
 }

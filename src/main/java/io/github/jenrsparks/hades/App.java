@@ -5,6 +5,7 @@ import static io.github.jenrsparks.hades.constants.WriterConstant.PASSTHROUGH_SP
 import java.io.File;
 import java.util.Map;
 import org.slf4j.LoggerFactory;
+import io.github.jenrsparks.FileFormat;
 import io.github.jenrsparks.hades.actors.HadesConverter;
 import io.github.jenrsparks.hades.actors.HadesWriter;
 import io.github.jenrsparks.hades.actors.LuaDataExtractor;
@@ -35,9 +36,6 @@ public class App implements Runnable {
             defaultValue = "save2.json")
     private File outputFile;
 
-    @Option(names = {"-f", "--format"}, description = "Output format (json or yaml)", defaultValue = "json")
-    private String outputFormat;
-
     // TODO Remove this once we have confidence in the transformation process, or at least make it a debug option only
     @Option(names = {"-t", "--temp"}, description = "Output JSON file",
             defaultValue = "save2_temp.json")
@@ -65,6 +63,7 @@ public class App implements Runnable {
     }
 
     private boolean convertAndWrite(Map<String, Object> data, File target, File specFile, String defaultSpecPath) {
+        FileFormat outputFormat = FileFormat.getFileFormat(target);
         specFile = getOrDetfaultSpecFile(specFile, defaultSpecPath);
         Map<String, Object> convertedData = new HadesConverter(specFile).convert(data);
         boolean success = HadesWriter.getInstance(outputFormat, convertedData).target(target).write();
