@@ -50,7 +50,7 @@
         <version>2.10.1</version>
     </dependency>
 
-    <!-- Jackson for YAML parsing -->
+    <!-- Jackson for YAML parsing & writing -->
     <dependency>
         <groupId>com.fasterxml.jackson.core</groupId>
         <artifactId>jackson-databind</artifactId>

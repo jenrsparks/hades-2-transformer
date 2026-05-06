@@ -31,10 +31,14 @@ public class App implements Runnable {
     @Option(names = {"-i", "--input"}, description = "Input LUA file", defaultValue = "save2.lua")
     private File inputFile;
 
-    @Option(names = {"-o", "--output"}, description = "Output JSON file",
+    @Option(names = {"-o", "--output"}, description = "Output file name",
             defaultValue = "save2.json")
     private File outputFile;
 
+    @Option(names = {"-f", "--format"}, description = "Output format (json or yaml)", defaultValue = "json")
+    private String outputFormat;
+
+    // TODO Remove this once we have confidence in the transformation process, or at least make it a debug option only
     @Option(names = {"-t", "--temp"}, description = "Output JSON file",
             defaultValue = "save2_temp.json")
     private File tempFile;
@@ -56,14 +60,14 @@ public class App implements Runnable {
         Map<String, Object> rawData = new LuaDataExtractor().extract(inputFile);
         convertAndWrite(rawData, outputFile, specFile, DEFAULT_SPEC_FILE.getValue());
 
-        // TODO -- get rid of this, or keep for debug only
+        // TODO -- add flag to use this for debug purposes
         convertAndWrite(rawData, tempFile, specFile, PASSTHROUGH_SPEC_FILE.getValue());
     }
 
     private boolean convertAndWrite(Map<String, Object> data, File target, File specFile, String defaultSpecPath) {
         specFile = getOrDetfaultSpecFile(specFile, defaultSpecPath);
         Map<String, Object> convertedData = new HadesConverter(specFile).convert(data);
-        boolean success = new HadesWriter(convertedData).file(target).writeAsJson();
+        boolean success = HadesWriter.getInstance(outputFormat, convertedData).target(target).write();
 
         if (success) {
             logger.debug("Successfully wrote JSON to file: " + target.getAbsolutePath());
