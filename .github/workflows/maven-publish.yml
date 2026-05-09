@@ -1,12 +1,11 @@
 # This workflow will build a package using Maven and then publish it to GitHub packages when a release is created
 # For more information see: https://github.com/actions/setup-java/blob/main/docs/advanced-usage.md#apache-maven-with-a-settings-path
 
-name: Package
+name: Publish to GitHub Packages Apache Maven
 
 on:
-  push:
-    branches:
-      - main
+  release:
+    types: [created]
 
 jobs:
   build:
@@ -27,15 +26,9 @@ jobs:
         settings-path: ${{ github.workspace }} # location for the settings.xml file
 
     - name: Build with Maven
-      run: mvn -B package --file pom.xml
+      run: mvn -B deploy --file pom.xml
 
-    - name: Upload Build Artifact
-      uses: actions/upload-artifact@v7
-      with:
-        name: hades-2-json-converter  # The name of the zip file to download
-        path: target/hades-*.jar      # Path to your Maven build output
-
-    # - name: Publish to GitHub Packages Apache Maven
-    #   run: mvn deploy -s $GITHUB_WORKSPACE/settings.xml
-    #   env:
-    #     GITHUB_TOKEN: ${{ github.token }}
+    - name: Publish to GitHub Packages Apache Maven
+      run: mvn deploy -s $GITHUB_WORKSPACE/settings.xml
+      env:
+        GITHUB_TOKEN: ${{ github.token }}

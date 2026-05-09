@@ -4,16 +4,39 @@
   <modelVersion>4.0.0</modelVersion>
 
   <groupId>io.github.jenrsparks</groupId>
-  <artifactId>hades-2-json-converter</artifactId>
-  <version>0.1.0-RELEASE</version>
+  <artifactId>hades-2-transformer</artifactId>
+  <version>0.2.0-SNAPSHOT</version>
 
-  <name>hades-2-json-converter</name>
+  <name>hades-2-transformer</name>
   <url>http://jenrsparks.github.io</url>
 
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <maven.compiler.release>21</maven.compiler.release>
   </properties>
+
+  <repositories>
+    <repository>
+      <id>central</id>
+      <url>https://repo.maven.apache.org/maven2</url>
+    </repository>
+    <repository>
+      <id>github</id>
+      <url>https://maven.pkg.github.com/jenrsparks/hades-2-transformer</url>
+      <snapshots>
+        <enabled>true</enabled>
+      </snapshots>
+    </repository>
+  </repositories>
+
+
+  <distributionManagement>
+   <repository>
+     <id>github</id>
+     <name>GitHub jenrsparks Apache Maven Packages</name>
+     <url>https://maven.pkg.github.com/jenrsparks/hades-2-transformer</url>
+   </repository>
+  </distributionManagement>
 
   <dependencyManagement>
     <dependencies>

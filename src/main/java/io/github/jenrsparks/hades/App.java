@@ -1,6 +1,5 @@
 package io.github.jenrsparks.hades;
 
-import static io.github.jenrsparks.hades.constants.WriterConstant.DEFAULT_SPEC_FILE;
 import static io.github.jenrsparks.hades.constants.WriterConstant.PASSTHROUGH_SPEC_FILE;
 import java.io.File;
 import java.io.IOException;
