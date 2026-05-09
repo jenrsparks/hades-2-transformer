@@ -134,7 +134,7 @@ public class LuaDataExtractor {
     private List<String> getLuaEnvironmentKeyNames() {
         // Ignore ALL of Lua's standard environment libraries
         return List.of("_G", "_VERSION", "package", "string", "math", "table",
-                "coroutine", "os", "debug", "io");
+                "coroutine", "os", "debug", "io", "bit32", "luajava");
     }
 
 }

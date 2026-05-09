@@ -5,7 +5,8 @@ import java.util.List;
 
 public enum FileFormat {
     JSON(List.of("json")),
-    YAML(List.of("yaml", "yml"))
+    YAML(List.of("yaml", "yml")),
+    UNSUPPORTED(List.of("xml", "txt", "csv", "bin"))
     ;
 
     private final List<String> formatNames;

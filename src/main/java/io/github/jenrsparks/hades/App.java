@@ -2,13 +2,7 @@ package io.github.jenrsparks.hades;
 
 import static io.github.jenrsparks.hades.constants.WriterConstant.PASSTHROUGH_SPEC_FILE;
 import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
 import java.net.URL;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.nio.file.StandardCopyOption;
 import java.util.Map;
 import org.slf4j.LoggerFactory;
 import io.github.jenrsparks.FileFormat;
@@ -29,7 +23,6 @@ public class App implements Runnable {
     /**
      * 
      * Planned features:
-     * - TODO - Selection of JSON vs YAML output
      * - TODO - Translation file language selection
      * - TODO - Custom translation file as alternative
      * 
@@ -53,9 +46,6 @@ public class App implements Runnable {
 
     @Override
     public void run() {
-        logger.debug("Reading from: " + inputFile.getAbsolutePath());
-        logger.debug("Writing to: " + outputFile.getAbsolutePath());
-
         Map<String, Object> rawData = new LuaDataExtractor().extract(inputFile);
         convertAndWrite(rawData, outputFile, specFile, PASSTHROUGH_SPEC_FILE.getValue());
     }
@@ -65,7 +55,11 @@ public class App implements Runnable {
         specFile = getOrDefaultSpecFile(specFile, defaultSpecPath);
         Map<String, Object> convertedData = new HadesConverter(specFile).convert(data);
         boolean success = HadesWriter.getInstance(outputFormat, convertedData).target(target).write();
+        reportWriteResult(success, target);
+        return success;
+    }
 
+    boolean reportWriteResult(boolean success, File target) {
         if (success) {
             logger.debug("Successfully wrote JSON to file: " + target.getAbsolutePath());
         } else {
@@ -74,28 +68,21 @@ public class App implements Runnable {
         return success;
     }
 
-    private File getOrDefaultSpecFile(File specFile, String defaultSpecPath) {
+    File getOrDefaultSpecFile(File specFile, String defaultSpecPath) {
         if (specFile != null && specFile.exists() && specFile.isFile()) {
             return specFile;
         }
 
         if (specFile != null) {
-            logger.warn("Specified spec file '{}' does not exist or is not a regular file. Falling back to embedded resource '{}'.",
-                    specFile.getAbsolutePath(), defaultSpecPath);
+            logger.warn("Specified spec file '{}' does not exist or is not a regular file. Falling back to default specification.",
+                    specFile.getAbsolutePath());
         }
 
         URL resource = this.getClass().getResource(defaultSpecPath);
         if (resource == null) {
             throw new IllegalStateException("Default spec resource not found: " + defaultSpecPath);
-        }
-
-        try (InputStream inputStream = resource.openStream()) {
-            Path tempSpec = Files.createTempFile("hades-spec-", "-" + Paths.get(defaultSpecPath).getFileName());
-            tempSpec.toFile().deleteOnExit();
-            Files.copy(inputStream, tempSpec, StandardCopyOption.REPLACE_EXISTING);
-            return tempSpec.toFile();
-        } catch (IOException e) {
-            throw new RuntimeException("Failed to load default spec resource: " + defaultSpecPath, e);
+        } else {
+            return new File(resource.getFile());
         }
     }
 }
