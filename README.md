@@ -1,3 +1,5 @@
+[![Unit Test](https://github.com/jenrsparks/hades-2-transformer/actions/workflows/maven-test.yml/badge.svg)](https://github.com/jenrsparks/hades-2-transformer/actions/workflows/maven-test.yml) [![Package](https://github.com/jenrsparks/hades-2-transformer/actions/workflows/maven-publish.yml/badge.svg)](https://github.com/jenrsparks/hades-2-transformer/actions/workflows/maven-publish.yml)
+
 # Hades 2 Save File Transformer
 
 Convert your Hades 2 save files from `lua` format to `json` or `yaml`, applying data transformations to get your preferred structure and using Supergiant's own localization of terms for better readability.
