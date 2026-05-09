@@ -32,3 +32,10 @@ target/
 # OS files
 .DS_Store
 Thumbs.db
+
+# Exclude top-level test files resulting from project runs
+/*.json
+/*.yaml
+/*.yml
+/*.lua
+/*.sav
