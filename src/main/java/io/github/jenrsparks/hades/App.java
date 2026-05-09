@@ -3,6 +3,13 @@ package io.github.jenrsparks.hades;
 import static io.github.jenrsparks.hades.constants.WriterConstant.DEFAULT_SPEC_FILE;
 import static io.github.jenrsparks.hades.constants.WriterConstant.PASSTHROUGH_SPEC_FILE;
 import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.URL;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.util.Map;
 import org.slf4j.LoggerFactory;
 import io.github.jenrsparks.FileFormat;
@@ -36,11 +43,6 @@ public class App implements Runnable {
             defaultValue = "save2.json")
     private File outputFile;
 
-    // TODO Remove this once we have confidence in the transformation process, or at least make it a debug option only
-    @Option(names = {"-t", "--temp"}, description = "Output JSON file",
-            defaultValue = "save2_temp.json")
-    private File tempFile;
-
     @Option(names = {"-s", "--spec"}, description = "JOLT spec JSON file for data transformation",
             required = false)
     private File specFile;
@@ -56,15 +58,12 @@ public class App implements Runnable {
         logger.debug("Writing to: " + outputFile.getAbsolutePath());
 
         Map<String, Object> rawData = new LuaDataExtractor().extract(inputFile);
-        convertAndWrite(rawData, outputFile, specFile, DEFAULT_SPEC_FILE.getValue());
-
-        // TODO -- add flag to use this for debug purposes
-        convertAndWrite(rawData, tempFile, specFile, PASSTHROUGH_SPEC_FILE.getValue());
+        convertAndWrite(rawData, outputFile, specFile, PASSTHROUGH_SPEC_FILE.getValue());
     }
 
     private boolean convertAndWrite(Map<String, Object> data, File target, File specFile, String defaultSpecPath) {
         FileFormat outputFormat = FileFormat.getFileFormat(target);
-        specFile = getOrDetfaultSpecFile(specFile, defaultSpecPath);
+        specFile = getOrDefaultSpecFile(specFile, defaultSpecPath);
         Map<String, Object> convertedData = new HadesConverter(specFile).convert(data);
         boolean success = HadesWriter.getInstance(outputFormat, convertedData).target(target).write();
 
@@ -76,9 +75,28 @@ public class App implements Runnable {
         return success;
     }
 
-    private File getOrDetfaultSpecFile(File specFile, String defaultSpecPath) {
-        return specFile != null ? specFile
-                : new File(this.getClass().getResource(defaultSpecPath).getFile());//
+    private File getOrDefaultSpecFile(File specFile, String defaultSpecPath) {
+        if (specFile != null && specFile.exists() && specFile.isFile()) {
+            return specFile;
+        }
 
+        if (specFile != null) {
+            logger.warn("Specified spec file '{}' does not exist or is not a regular file. Falling back to embedded resource '{}'.",
+                    specFile.getAbsolutePath(), defaultSpecPath);
+        }
+
+        URL resource = this.getClass().getResource(defaultSpecPath);
+        if (resource == null) {
+            throw new IllegalStateException("Default spec resource not found: " + defaultSpecPath);
+        }
+
+        try (InputStream inputStream = resource.openStream()) {
+            Path tempSpec = Files.createTempFile("hades-spec-", "-" + Paths.get(defaultSpecPath).getFileName());
+            tempSpec.toFile().deleteOnExit();
+            Files.copy(inputStream, tempSpec, StandardCopyOption.REPLACE_EXISTING);
+            return tempSpec.toFile();
+        } catch (IOException e) {
+            throw new RuntimeException("Failed to load default spec resource: " + defaultSpecPath, e);
+        }
     }
 }
