@@ -1,4 +1,4 @@
-[![Unit Test](https://github.com/jenrsparks/hades-2-transformer/actions/workflows/maven-test.yml/badge.svg)](https://github.com/jenrsparks/hades-2-transformer/actions/workflows/maven-test.yml) [![Package](https://github.com/jenrsparks/hades-2-transformer/actions/workflows/maven-publish.yml/badge.svg)](https://github.com/jenrsparks/hades-2-transformer/actions/workflows/maven-publish.yml)
+[![Unit Test](https://github.com/jenrsparks/hades-2-transformer/actions/workflows/maven-test.yml/badge.svg)](https://github.com/jenrsparks/hades-2-transformer/actions/workflows/maven-test.yml) [![Package](https://github.com/jenrsparks/hades-2-transformer/actions/workflows/maven-package.yml/badge.svg)](https://github.com/jenrsparks/hades-2-transformer/actions/workflows/maven-package.yml)
 
 # Hades 2 Save File Transformer
 
