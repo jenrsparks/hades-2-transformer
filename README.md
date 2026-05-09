@@ -17,9 +17,14 @@ Future functionality coming soon:
 - Multi-language trait support
 - Custom language dictonary overrides
 
+Non-functional efforts pending:
+
+- Create build & publish solution for packages ready to use
+- Clean up debug- and development-related residuals throughout the program.
+
 ## Prerequisites
 
-To compile the application from source, you will need Maven 3.6 or higher. 
+To compile the application from source, you will need Maven 3.6 or higher.
 
 To run this application, you will need Java 21 or higher, along with a Hades 2 save file extracted using `Hades-SavesExtractor`.
 
@@ -45,11 +50,13 @@ java -jar target/hades-2-json-converter-1.0-SNAPSHOT.jar [options]
 
 ### Examples
 
-Convert a save file to JSON:
+The below examples are written assuming you're working with a pre-built package of the application.
 
-```bash
-java -cp target/classes io.github.jenrsparks.hades.App -i save2.lua -o save2.json
-```
+- Convert a save file to JSON:
+
+  ```bash
+  java -jar -i save2.lua -o save2.json
+  ```
 
 Convert to YAML:
 
