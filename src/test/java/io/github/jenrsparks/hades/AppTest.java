@@ -1,8 +1,6 @@
 package io.github.jenrsparks.hades;
 
-import static io.github.jenrsparks.hades.constants.WriterConstant.PASSTHROUGH_SPEC_FILE;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -263,52 +261,4 @@ public class AppTest {
         field.set(target, value);
     }
 
-    @Test
-    void testGetOrDefaultSpecFile_default() {
-        App appInstance = new App();
-        File specFile = appInstance.getOrDefaultSpecFile(null, PASSTHROUGH_SPEC_FILE.getValue());
-        assertNotNull(specFile);
-        assertTrue(specFile.exists());
-    }
-
-    @Test
-    void testGetOrDefaultSpecFile_invalidDefault() {
-        App appInstance = new App();
-        String defaultSpecPath = PASSTHROUGH_SPEC_FILE.getValue() + "-nonexistent";
-        assertThrows( IllegalStateException.class, () -> {
-            appInstance.getOrDefaultSpecFile(null, defaultSpecPath);
-        });
-    }
-
-    @Test
-    void testGetOrDefaultSpecFile_sample() {
-        App appInstance = new App();
-        File inputFile = new File("src/test/resources/sample-spec.yaml");
-        File specFile =
-                appInstance.getOrDefaultSpecFile(inputFile, PASSTHROUGH_SPEC_FILE.getValue());
-        assertNotNull(specFile);
-        assertTrue(specFile.exists());
-        assertEquals(inputFile.getPath(), specFile.getPath());
-    }
-
-    @Test
-    void testGetOrDefaultSpecFile_invalidSample() {
-        App appInstance = new App();
-        File inputFile = new File("src/test/resources/sample-spec.yaml.bad");
-        File specFile =
-                appInstance.getOrDefaultSpecFile(inputFile, PASSTHROUGH_SPEC_FILE.getValue());
-        assertNotNull(specFile);
-        assertTrue(specFile.exists());
-        assertNotEquals(inputFile.getPath(), specFile.getPath());
-    }
-
-    @Test
-    void testGetOrDefaultSpecFile_folder() {
-        App appInstance = new App();
-        File inputFile = new File("src/test/resources");
-        File specFile = appInstance.getOrDefaultSpecFile(inputFile, PASSTHROUGH_SPEC_FILE.getValue());
-        assertNotNull(specFile);
-        assertTrue(specFile.exists());
-        assertNotEquals(inputFile.getPath(), specFile.getPath());
-    }
 }

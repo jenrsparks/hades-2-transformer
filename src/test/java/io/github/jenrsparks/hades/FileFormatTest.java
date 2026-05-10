@@ -1,4 +1,4 @@
-package io.github.jenrsparks;
+package io.github.jenrsparks.hades;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;

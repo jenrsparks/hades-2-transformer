@@ -16,7 +16,7 @@ TraitCache:
   AphroditeManaBoon: ""
   NarcissusD: ""
   ChaosManaBlessing: ""
-  RoomRewardMaxManaTrait"] = 3;
+  RoomRewardMaxManaTrait": 3
   ManaBurstBoon: ""
   HephaestusSprintBoon: ""
   InsideCastBuffMetaUpgrade: ""

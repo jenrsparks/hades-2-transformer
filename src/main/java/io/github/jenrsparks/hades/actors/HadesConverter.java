@@ -22,8 +22,7 @@ public class HadesConverter {
 
         ObjectMapper yamlMapper = new ObjectMapper(new YAMLFactory());
         try {
-            @SuppressWarnings("unchecked")
-            List<Object> spec = yamlMapper.readValue(joltSpecYaml, List.class);
+            List<?> spec = yamlMapper.readValue(joltSpecYaml, List.class);
             this.transformer = Chainr.fromSpec(spec);
         } catch (IOException e) {
             throw new RuntimeException("Failed to parse Jolt spec: " + e.getMessage(), e);

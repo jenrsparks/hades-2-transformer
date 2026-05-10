@@ -1,4 +1,4 @@
-package io.github.jenrsparks;
+package io.github.jenrsparks.hades;
 
 import java.io.File;
 import java.util.List;

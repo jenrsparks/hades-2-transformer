@@ -8,7 +8,7 @@ import java.util.HashMap;
 import java.util.Map;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.BeforeEach;
-import io.github.jenrsparks.FileFormat;
+import io.github.jenrsparks.hades.FileFormat;
 import io.github.jenrsparks.hades.actors.impl.HadesJsonWriter;
 import io.github.jenrsparks.hades.actors.impl.HadesYamlWriter;
 

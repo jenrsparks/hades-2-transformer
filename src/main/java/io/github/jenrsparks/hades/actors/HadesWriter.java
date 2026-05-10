@@ -2,7 +2,7 @@ package io.github.jenrsparks.hades.actors;
 
 import java.io.File;
 import java.util.Map;
-import io.github.jenrsparks.FileFormat;
+import io.github.jenrsparks.hades.FileFormat;
 import io.github.jenrsparks.hades.actors.impl.HadesJsonWriter;
 import io.github.jenrsparks.hades.actors.impl.HadesYamlWriter;
 
