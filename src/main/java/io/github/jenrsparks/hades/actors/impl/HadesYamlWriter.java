@@ -12,8 +12,9 @@ public class HadesYamlWriter extends HadesWriter {
     private Map<String,Object> data;
     private File targetFile;
 
-    public HadesYamlWriter(Map<String, Object> data) {
+    public HadesYamlWriter data(Map<String, Object> data) {
         this.data = data;
+        return this;
     }
 
     @Override

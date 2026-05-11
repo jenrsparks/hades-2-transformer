@@ -4,6 +4,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import java.io.File;
 import java.nio.file.Files;
 import java.util.HashMap;
@@ -16,7 +17,7 @@ import io.github.jenrsparks.hades.actors.HadesWriter;
 
 public class HadesJsonWriterTest {
 
-    private HadesJsonWriter writer;
+    private HadesWriter writer;
     private Map<String, Object> testData;
     private File tempOutputFile;
 
@@ -30,33 +31,34 @@ public class HadesJsonWriterTest {
         tempOutputFile = Files.createTempFile("test-output", ".json").toFile();
         tempOutputFile.deleteOnExit();
         
-        writer = new HadesJsonWriter(testData);
+        writer = HadesWriter.getInstance(tempOutputFile).data(testData);
     }
 
     @Test
     void testTarget_validFile() {
-        HadesWriter result = writer.target(tempOutputFile);
+        HadesWriter result = HadesWriter.getInstance(tempOutputFile);
         assertNotNull(result);
         assertTrue(result instanceof HadesJsonWriter);
     }
 
     @Test
     void testTarget_returnsChain() {
-        HadesWriter result = writer.target(tempOutputFile);
-        assertEquals(writer, result);
+        HadesWriter result = HadesWriter.getInstance(tempOutputFile).data(testData);
+        assertNotEquals(writer, result); // same inputs, different instances
+        assertEquals(writer.getClass(), result.getClass());
     }
 
     @Test
     void testTarget_invalidPath() {
         File invalidFile = new File("/nonexistent/directory/file.json");
         assertThrows(RuntimeException.class, () -> {
-            writer.target(invalidFile);
+            HadesWriter.getInstance(invalidFile);
         });
     }
 
     @Test
     void testWrite_success() {
-        writer.target(tempOutputFile);
+        writer = HadesWriter.getInstance(tempOutputFile).data(testData);
         boolean result = writer.write();
         assertTrue(result);
         assertTrue(tempOutputFile.exists());
@@ -66,8 +68,7 @@ public class HadesJsonWriterTest {
     @Test
     void testWrite_emptyData() throws Exception {
         Map<String, Object> emptyData = new HashMap<>();
-        HadesJsonWriter emptyWriter = new HadesJsonWriter(emptyData);
-        emptyWriter.target(tempOutputFile);
+        HadesWriter emptyWriter = HadesWriter.getInstance(tempOutputFile).data(emptyData);
         
         boolean result = emptyWriter.write();
         assertTrue(result);
@@ -84,8 +85,7 @@ public class HadesJsonWriterTest {
         nestedMap.put("nested_key", "nested_value");
         testData.put("nested", nestedMap);
         
-        writer = new HadesJsonWriter(testData);
-        writer.target(tempOutputFile);
+        writer = HadesWriter.getInstance(tempOutputFile).data(testData);
         
         boolean result = writer.write();
         assertTrue(result);
@@ -100,8 +100,7 @@ public class HadesJsonWriterTest {
     void testWrite_withListData() throws Exception {
         testData.put("items", java.util.Arrays.asList("item1", "item2", "item3"));
         
-        writer = new HadesJsonWriter(testData);
-        writer.target(tempOutputFile);
+        writer = HadesWriter.getInstance(tempOutputFile).data(testData);
         
         boolean result = writer.write();
         assertTrue(result);
@@ -113,7 +112,7 @@ public class HadesJsonWriterTest {
 
     @Test
     void testWrite_prettyPrinting() throws Exception {
-        writer.target(tempOutputFile);
+        writer = HadesWriter.getInstance(tempOutputFile).data(testData);
         writer.write();
         
         String content = new String(Files.readAllBytes(tempOutputFile.toPath()));
@@ -123,7 +122,7 @@ public class HadesJsonWriterTest {
 
     @Test
     void testWrite_validJsonFormat() throws Exception {
-        writer.target(tempOutputFile);
+        writer = HadesWriter.getInstance(tempOutputFile).data(testData);
         writer.write();
         
         String content = new String(Files.readAllBytes(tempOutputFile.toPath()));
@@ -139,8 +138,7 @@ public class HadesJsonWriterTest {
         testData.put("special", "value with special chars: !@#$%^&*()");
         testData.put("unicode", "unicode: 你好世界 🌍");
         
-        writer = new HadesJsonWriter(testData);
-        writer.target(tempOutputFile);
+        writer = HadesWriter.getInstance(tempOutputFile).data(testData);
         
         boolean result = writer.write();
         assertTrue(result);
@@ -155,8 +153,7 @@ public class HadesJsonWriterTest {
             testData.put("key_" + i, "value_" + i);
         }
         
-        writer = new HadesJsonWriter(testData);
-        writer.target(tempOutputFile);
+        writer = HadesWriter.getInstance(tempOutputFile).data(testData);
         
         boolean result = writer.write();
         assertTrue(result);
@@ -165,7 +162,7 @@ public class HadesJsonWriterTest {
 
     @Test
     void testChaining() {
-        HadesWriter result = writer.target(tempOutputFile);
+        HadesWriter result = HadesWriter.getInstance(tempOutputFile).data(testData);
         assertTrue(result.write());
         assertTrue(tempOutputFile.exists());
     }

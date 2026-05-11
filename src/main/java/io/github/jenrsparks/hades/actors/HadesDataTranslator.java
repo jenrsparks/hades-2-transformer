@@ -6,8 +6,10 @@ import java.util.Map;
 
 public class HadesDataTranslator {
    
-    // TODO language + dictionary file
+    // TO.DO language + dictionary file
+    @SuppressWarnings("unused")
     private String language;
+    @SuppressWarnings("unused")
     private File dictionaryFile;
     
     private HadesDataTranslator() {
@@ -32,7 +34,7 @@ public class HadesDataTranslator {
         // Implement the translation logic here using the language and dictionaryFile
         // For example, read the dictionary file and apply translations to the data
         // This is a placeholder implementation and should be replaced with actual logic
-        return new HashMap<>(); // Return an empty map for now
+        return data; // Return the existing map for now
     }
 
 }

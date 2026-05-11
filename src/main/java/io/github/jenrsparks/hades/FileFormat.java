@@ -12,6 +12,9 @@ public enum FileFormat {
     private final List<String> formatNames;
 
     public static FileFormat getFileFormat(File file) {
+        if(file == null) {
+            throw new IllegalArgumentException("File value is missing.");
+        }
         String fileName = file.getName().toLowerCase();
         for (FileFormat format : FileFormat.values()) {
             for (String formatName : format.getValues()) {

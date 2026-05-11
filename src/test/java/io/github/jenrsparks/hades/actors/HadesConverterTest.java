@@ -24,7 +24,7 @@ public class HadesConverterTest {
         String specContent = "- operation: shift\n  spec:\n    key1: key1\n    key2: key2\n";
         Files.write(testSpecFile.toPath(), specContent.getBytes());
         
-        converter = new HadesConverter(testSpecFile);
+        converter = HadesConverter.getInstance().withSpec(testSpecFile, specContent);
     }
 
     @Test
@@ -78,7 +78,7 @@ public class HadesConverterTest {
     void testConstructor_invalidSpecFile() {
         File invalidFile = new File("/nonexistent/path/to/spec.yaml");
         assertThrows(RuntimeException.class, () -> {
-            new HadesConverter(invalidFile);
+            HadesConverter.getInstance().withSpec(invalidFile, null);
         });
     }
 
@@ -88,7 +88,7 @@ public class HadesConverterTest {
         Files.write(malformedFile.toPath(), "invalid: yaml: content: :".getBytes());
         
         assertThrows(RuntimeException.class, () -> {
-            new HadesConverter(malformedFile);
+            HadesConverter.getInstance().withSpec(malformedFile, null);
         });
     }
 

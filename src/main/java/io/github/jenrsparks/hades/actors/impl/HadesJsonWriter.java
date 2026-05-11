@@ -17,8 +17,9 @@ public class HadesJsonWriter extends HadesWriter {
     private Map<String,Object> data;
     private FileWriter fileWriter;
 
-    public HadesJsonWriter(Map<String, Object> data) {
+    public HadesWriter data(Map<String, Object> data) {
         this.data = data;
+        return this;
     }
 
     public HadesWriter target(File outputFile) {

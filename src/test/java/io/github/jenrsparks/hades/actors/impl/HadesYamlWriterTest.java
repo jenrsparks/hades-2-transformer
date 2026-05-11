@@ -2,8 +2,8 @@ package io.github.jenrsparks.hades.actors.impl;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import java.io.File;
 import java.nio.file.Files;
@@ -18,7 +18,7 @@ import io.github.jenrsparks.hades.actors.HadesWriter;
 
 public class HadesYamlWriterTest {
 
-    private HadesYamlWriter writer;
+    private HadesWriter writer;
     private Map<String, Object> testData;
     private File tempOutputFile;
 
@@ -32,34 +32,34 @@ public class HadesYamlWriterTest {
         tempOutputFile = Files.createTempFile("test-output", ".yaml").toFile();
         tempOutputFile.deleteOnExit();
         
-        writer = new HadesYamlWriter(testData);
+        writer = HadesWriter.getInstance(tempOutputFile).data(testData);
     }
 
     @Test
     void testTarget_validFile() {
-        HadesWriter result = writer.target(tempOutputFile);
+        HadesWriter result = HadesWriter.getInstance(tempOutputFile).data(testData);
         assertNotNull(result);
-        assertTrue(result instanceof HadesYamlWriter);
+        assertTrue(result instanceof HadesWriter);
     }
 
     @Test
     void testTarget_returnsChain() {
-        HadesWriter result = writer.target(tempOutputFile);
-        assertEquals(writer, result);
+        HadesWriter result = HadesWriter.getInstance(tempOutputFile).data(testData);
+        assertNotEquals(writer, result);
     }
 
     @Test
-    @Disabled("HadesYamlWriter does not validate path on target() - validation happens on write()")
+    @Disabled("HadesWriter does not validate path on target() - validation happens on write()")
     void testTarget_invalidPath() {
         File invalidFile = new File("/nonexistent/directory/file.yaml");
         assertThrows(RuntimeException.class, () -> {
-            writer.target(invalidFile);
+            HadesWriter.getInstance(invalidFile);
         });
     }
 
     @Test
     void testWrite_success() {
-        writer.target(tempOutputFile);
+        writer = HadesWriter.getInstance(tempOutputFile).data(testData);
         boolean result = writer.write();
         assertTrue(result);
         assertTrue(tempOutputFile.exists());
@@ -69,8 +69,7 @@ public class HadesYamlWriterTest {
     @Test
     void testWrite_emptyData() throws Exception {
         Map<String, Object> emptyData = new HashMap<>();
-        HadesYamlWriter emptyWriter = new HadesYamlWriter(emptyData);
-        emptyWriter.target(tempOutputFile);
+        HadesWriter emptyWriter = HadesWriter.getInstance(tempOutputFile).data(emptyData);
         
         boolean result = emptyWriter.write();
         // Empty data still results in valid YAML output
@@ -84,8 +83,7 @@ public class HadesYamlWriterTest {
         nestedMap.put("nested_key", "nested_value");
         testData.put("nested", nestedMap);
         
-        writer = new HadesYamlWriter(testData);
-        writer.target(tempOutputFile);
+        writer = HadesWriter.getInstance(tempOutputFile).data(testData);
         
         boolean result = writer.write();
         assertTrue(result);
@@ -100,8 +98,7 @@ public class HadesYamlWriterTest {
     void testWrite_withListData() throws Exception {
         testData.put("items", java.util.Arrays.asList("item1", "item2", "item3"));
         
-        writer = new HadesYamlWriter(testData);
-        writer.target(tempOutputFile);
+        writer = HadesWriter.getInstance(tempOutputFile).data(testData);
         
         boolean result = writer.write();
         assertTrue(result);
@@ -115,7 +112,7 @@ public class HadesYamlWriterTest {
 
     @Test
     void testWrite_validYamlFormat() throws Exception {
-        writer.target(tempOutputFile);
+        writer = HadesWriter.getInstance(tempOutputFile).data(testData);
         writer.write();
         
         String content = new String(Files.readAllBytes(tempOutputFile.toPath()));
@@ -131,8 +128,7 @@ public class HadesYamlWriterTest {
         testData.put("special", "value with special chars: !@#$%^&*()");
         testData.put("unicode", "unicode: 你好世界 🌍");
         
-        writer = new HadesYamlWriter(testData);
-        writer.target(tempOutputFile);
+        writer = HadesWriter.getInstance(tempOutputFile).data(testData);
         
         boolean result = writer.write();
         assertTrue(result);
@@ -147,8 +143,7 @@ public class HadesYamlWriterTest {
             testData.put("key_" + i, "value_" + i);
         }
         
-        writer = new HadesYamlWriter(testData);
-        writer.target(tempOutputFile);
+        writer = HadesWriter.getInstance(tempOutputFile).data(testData);
         
         boolean result = writer.write();
         assertTrue(result);
@@ -157,14 +152,14 @@ public class HadesYamlWriterTest {
 
     @Test
     void testWrite_returnsTrue() {
-        writer.target(tempOutputFile);
+        writer = HadesWriter.getInstance(tempOutputFile).data(testData);
         boolean result = writer.write();
         assertTrue(result);
     }
 
     @Test
     void testChaining() {
-        HadesWriter result = writer.target(tempOutputFile);
+        HadesWriter result = HadesWriter.getInstance(tempOutputFile).data(testData);
         assertTrue(result.write());
         assertTrue(tempOutputFile.exists());
     }
@@ -172,7 +167,7 @@ public class HadesYamlWriterTest {
     @Test
     void testWrite_multipleConsecutiveWrites() throws Exception {
         // Write to the same file multiple times
-        writer.target(tempOutputFile);
+        writer = HadesWriter.getInstance(tempOutputFile).data(testData);
         assertTrue(writer.write());
         assertTrue(tempOutputFile.exists());
         long firstSize = tempOutputFile.length();
@@ -180,8 +175,7 @@ public class HadesYamlWriterTest {
         // Write again with different data
         Map<String, Object> newData = new HashMap<>();
         newData.put("newKey", "newValue");
-        writer = new HadesYamlWriter(newData);
-        writer.target(tempOutputFile);
+        writer = HadesWriter.getInstance(tempOutputFile).data(newData);
         assertTrue(writer.write());
         
         // Verify file was updated
@@ -190,11 +184,9 @@ public class HadesYamlWriterTest {
     }
 
     @Test
-    void testWrite_withBadFile() throws Exception {
-        HadesYamlWriter nullDataWriter = new HadesYamlWriter(null);
-        nullDataWriter.target(null);
-        assertThrows(RuntimeException.class, () -> {
-            nullDataWriter.write();
+    void testCreate_withBadFile() throws Exception {
+        assertThrows(IllegalArgumentException.class, () -> {
+            HadesWriter.getInstance(null);
         });
     }
 }

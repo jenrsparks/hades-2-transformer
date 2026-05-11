@@ -8,7 +8,6 @@ import io.github.jenrsparks.hades.actors.HadesConverter;
 import io.github.jenrsparks.hades.actors.HadesDataTranslator;
 import io.github.jenrsparks.hades.actors.HadesWriter;
 import io.github.jenrsparks.hades.actors.LuaDataExtractor;
-import io.github.jenrsparks.hades.helpers.FileHelper;
 import picocli.CommandLine;
 import picocli.CommandLine.Command;
 import picocli.CommandLine.Option;
@@ -32,7 +31,7 @@ public class App implements Runnable {
     private File specFile;
 
     @Option(names = {"-l", "--language"},
-            description = "Translation language code (e.g. 'en', 'es')", required = false)
+            description = "Translation language code (e.g. 'en', 'es')", required = false, defaultValue = "en")
     private String language;
 
     @Option(names = {"-t", "--translation-file"}, description = "Custom translation file path",
@@ -47,39 +46,21 @@ public class App implements Runnable {
     @Override
     public void run() {
         Map<String, Object> rawData = new LuaDataExtractor().extract(inputFile);
+
         Map<String, Object> translatedData = //
                 HadesDataTranslator.getInstance() //
                         .withLanguage(language) //
                         .withDictionaryFile(translationFile) //
                         .translate(rawData);
-        // applyTranslation(rawData, language, translationFile);
-        convertAndWrite(translatedData, outputFile, specFile, PASSTHROUGH_SPEC_FILE.getValue());
-    }
 
-    // TODO All this should be encapsulated in a separate translation layer
-    boolean applyTranslation(Map<String, Object> data, String langCode, File transFile) {
-        if (transFile != null) {
-            logger.info("Custom translation file provided: " + transFile.getPath());
-        } else if (langCode != null) {
-            logger.info("Translation language selected: " + langCode);
-        } else {
-            logger.info("No translation language provided; using default (en)");
-        }
-        String resolvedLangCode = (langCode != null) ? langCode : "en";
+        Map<String, Object> convertedData = //
+                HadesConverter.getInstance() //
+                        .withSpec(specFile, PASSTHROUGH_SPEC_FILE.getValue()) //
+                        .convert(translatedData); //
 
-        return true;
-    }
+        boolean success = HadesWriter.getInstance(outputFile).data(convertedData).write();
 
-    // TODO This should be encapsulated in a separate conversion layer
-    private boolean convertAndWrite(Map<String, Object> data, File target, File specFile,
-            String defaultSpecPath) {
-        FileFormat outputFormat = FileFormat.getFileFormat(target);
-        specFile = FileHelper.getFileWithFallbackResource(specFile, defaultSpecPath);
-        Map<String, Object> convertedData = new HadesConverter(specFile).convert(data);
-        boolean success =
-                HadesWriter.getInstance(outputFormat, convertedData).target(target).write();
-        reportWriteResult(success, target);
-        return success;
+        reportWriteResult(success, outputFile);
     }
 
     boolean reportWriteResult(boolean success, File target) {
