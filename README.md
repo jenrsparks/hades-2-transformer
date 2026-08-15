@@ -28,7 +28,7 @@ Non-functional efforts pending:
 
 To compile the application from source, you will need Maven 3.6 or higher.
 
-To run this application, you will need Java 21 or higher, along with a Hades 2 save file extracted using `Hades-SavesExtractor`.
+To run this application, you will need Java 25 or higher, along with a Hades 2 save file extracted using `Hades-SavesExtractor`.
 
 ## Usage
 
